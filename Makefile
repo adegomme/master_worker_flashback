@@ -5,7 +5,7 @@ MAX_WORKERS=6000
 STEP_WORKERS=2000
 NUM_TRIALS=3
 
-VERSIONS=stable unstable_old unstable
+VERSIONS=stable unstable_old
 
 default:
 	@echo "make build  : will build the Docker containers and the simulators (do this first)"
@@ -17,7 +17,7 @@ build:
     		echo "** Building for SimGrid $${version} **" ; \
 		mkdir build_simgrid_$${version} ; \
 		chmod -R 777 build_simgrid_$${version} ; \
-		docker run -it --rm -v `pwd`:/home/simgrid -w /home/simgrid/build_simgrid_$${version}/ simgrid/$${version} bash -c "apt update && apt install -y cmake gcc g++ libboost-dev && cmake .. && make master_worker_$${version} VERBOSE=1" ; \
+		docker run --rm -v `pwd`:/home/simgrid -w /home/simgrid/build_simgrid_$${version}/ simgrid/$${version} bash -c "apt update && apt install -y cmake gcc g++ libboost-dev && cmake .. && make master_worker_$${version} VERBOSE=1" ; \
 	done	
 check:
 	python3 ./check_makespans.py ${VERSIONS}
