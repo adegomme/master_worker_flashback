@@ -17,7 +17,7 @@ build:
     		echo "** Building for SimGrid $${version} **" ; \
 		mkdir build_simgrid_$${version} ; \
 		chmod -R 777 build_simgrid_$${version} ; \
-		docker run -it --rm -v `pwd`:/home/simgrid -w /home/simgrid/build_simgrid_$${version}/ simgrid/$${version} bash -c "apt update && apt install -y cmake && cmake .. && make master_worker_$${version} VERBOSE=1" ; \
+		docker run -it --rm -v `pwd`:/home/simgrid -w /home/simgrid/build_simgrid_$${version}/ simgrid/$${version} bash -c "apt update && apt install -y cmake gcc g++ libboost-dev && cmake .. && make master_worker_$${version} VERBOSE=1" ; \
 	done	
 check:
 	python3 ./check_makespans.py ${VERSIONS}
