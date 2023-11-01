@@ -38,7 +38,10 @@ energy_plugins = {
         "v3_24":"--cfg=plugin:host_energy", 
         "v3_34":"--cfg=plugin:host_energy",
         "v3_35":"--cfg=plugin:host_energy",
-        "v3_36":"--cfg=plugin:host_energy"
+        "v3_36":"--cfg=plugin:host_energy",
+        "stable":"--cfg=plugin:host_energy",
+        "unstable":"--cfg=plugin:host_energy",
+        "unstable_old":"--cfg=plugin:host_energy"
         }
 
 line_styles = {
@@ -51,7 +54,10 @@ line_styles = {
         "v3_24":"-.", 
         "v3_34":"--",
         "v3_35":"-.",
-        "v3_36":"-"
+        "v3_36":"--",
+        "unstable":"--",
+        "unstable_old":"--",
+        "stable":"--"
         }
 
 #stack_size_in_kb = 100
@@ -74,8 +80,7 @@ for num_workers in num_workers_values:
         times = []
         mems = []
         for seed in range(0, num_trials):
-
-            command = f"docker run -it --rm -w /home/simgrid/build_simgrid_{version}/ -v `pwd`:/home/simgrid simgrid_{version} /usr/bin/time -v ./master_worker_{version} {num_hosts} {num_cores_per_host} {min_core_speed} {max_core_speed} {num_links} {min_bandwidth} {max_bandwidth} {route_length} {num_workers} {num_tasks} {min_computation} {max_computation} {min_data_size} {max_data_size} {seed} --log=root.thresh:critical {energy_plugins[version]}"
+            command = f"docker run --privileged -it --rm -w /home/simgrid/build_simgrid_{version}/ -v `pwd`:/home/simgrid simgrid/{version}:latest bash -c 'apt update; apt install -y time; /usr/bin/time -v ./master_worker_{version} {num_hosts} {num_cores_per_host} {min_core_speed} {max_core_speed} {num_links} {min_bandwidth} {max_bandwidth} {route_length} {num_workers} {num_tasks} {min_computation} {max_computation} {min_data_size} {max_data_size} {seed} --log=root.thresh:critical {energy_plugins[version]}'"
             print(command)
 
             try:

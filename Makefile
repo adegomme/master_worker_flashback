@@ -1,27 +1,24 @@
 .NOTPARALLEL:
 
-MIN_WORKERS=1000
-MAX_WORKERS=5000
-STEP_WORKERS=1000
-NUM_TRIALS=5
+MIN_WORKERS=2000
+MAX_WORKERS=6000
+STEP_WORKERS=2000
+NUM_TRIALS=3
 
-VERSIONS=v3_10 v3_34 v3_35 v3_36
+VERSIONS=stable unstable_old unstable
 
 default:
 	@echo "make build  : will build the Docker containers and the simulators (do this first)"
 	@echo "make check  : will run one experiment with all containers to check that makespans are the same"
 	@echo "make run    : will run the experiment with whatever has been built last"
 
-build: clean
+build:
 	@for version in ${VERSIONS} ; do \
     		echo "** Building for SimGrid $${version} **" ; \
-		echo docker build -t simgrid_$${version} -f Dockerfile_simgrid_$${version} . ; \
-		docker build -t simgrid_$${version} -f Dockerfile_simgrid_$${version} . ; \
 		mkdir build_simgrid_$${version} ; \
-		docker run -it --rm -v `pwd`:/home/simgrid -w /home/simgrid/build_simgrid_$${version}/ simgrid_$${version} cmake .. ; \
-		docker run -it --rm -v `pwd`:/home/simgrid -w /home/simgrid/build_simgrid_$${version}/ simgrid_$${version} make master_worker_$${version} ; \
+		chmod -R 777 build_simgrid_$${version} ; \
+		docker run -it --rm -v `pwd`:/home/simgrid -w /home/simgrid/build_simgrid_$${version}/ simgrid/$${version} bash -c "apt update && apt install -y cmake && cmake .. && make master_worker_$${version} VERBOSE=1" ; \
 	done	
-
 check:
 	python3 ./check_makespans.py ${VERSIONS}
 
